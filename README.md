@@ -31,31 +31,21 @@ Special `_unlimited` images are available with Unlimited JCE Policy
 ### Tags
 
 Latest Oracle Java 8 Server-JRE:
-* `latest`
-* `8`
 * `8_server-jre`
 * `8_server-jre_unlimited`
 
 Latest Oracle Java 8 JDK (plus DCEVM variant)
+* `latest`
+* `8`
 * `8_jdk`
 * `8_jdk_unlimited`
-* `8_jdk-dcevm`
-* `8_jdk-dcevm_unlimited`
-
-Latest Oracle Java 7 Server-JRE:
-* `7`
-* `7_server-jre`
-
-Latest Oracle Java 7 JDK (plus DCEVM variant):
-* `7_jdk`
-* `7_jdk-dcevm`
 
 
 ### Usage
 
 Example: 
 
-    docker run -it --rm anapsix/alpine-java java -version
+    docker run -it --rm chwu/alpine-java java -version
 
 
 ### Disclaimer
