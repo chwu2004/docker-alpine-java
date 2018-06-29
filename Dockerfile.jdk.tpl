@@ -1,7 +1,8 @@
 # AlpineLinux with a glibc-%GLIBC_VERSION% and Oracle Java %JVM_MAJOR%
 FROM alpine:%ALPINE_VERSION%
 
-MAINTAINER Anastas Dancha <anapsix@random.io>
+MAINTAINER Albert Wu <chwu2004@gmail.com>
+# thanks to Anastas Dancha <anapsix@random.io> source
 # thanks to Vladimir Krivosheev <develar@gmail.com> aka @develar for smaller image
 # and Victor Palma <palma.victor@gmail.com> aka @devx for pointing it out
 
