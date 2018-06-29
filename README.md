@@ -34,7 +34,7 @@ Latest Oracle Java 8 Server-JRE:
 * `8_server-jre`
 * `8_server-jre_unlimited`
 
-Latest Oracle Java 8 JDK (plus DCEVM variant)
+Latest Oracle Java 8 JDK
 * `latest`
 * `8`
 * `8_jdk`
