@@ -1,7 +1,8 @@
 # AlpineLinux with a glibc-2.28-r0 and Oracle Java 8
 FROM alpine:3.8
 
-MAINTAINER Anastas Dancha <anapsix@random.io>
+MAINTAINER Albert Wu <chwu2004@gmail.com>
+# thanks to Anastas Dancha <anapsix@random.io> source
 # thanks to Vladimir Krivosheev <develar@gmail.com> aka @develar for smaller image
 # and Victor Palma <palma.victor@gmail.com> aka @devx for pointing it out
 
@@ -73,7 +74,6 @@ RUN set -ex && \
            /opt/jdk/jre/lib/amd64/libjavafx*.so \
            /opt/jdk/jre/lib/amd64/libjfx*.so \
            /opt/jdk/jre/lib/ext/jfxrt.jar \
-           /opt/jdk/jre/lib/ext/nashorn.jar \
            /opt/jdk/jre/lib/oblique-fonts \
            /opt/jdk/jre/lib/plugin.jar \
            /tmp/* /var/cache/apk/* && \
