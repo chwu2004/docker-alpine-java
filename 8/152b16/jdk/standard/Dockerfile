@@ -1,4 +1,4 @@
-# AlpineLinux with a glibc-2.28-r0 and Oracle Java 8
+# AlpineLinux with a glibc-2.29-r0 and Oracle Java 8
 FROM alpine:3.8
 
 MAINTAINER Albert Wu <chwu2004@gmail.com>
@@ -15,7 +15,7 @@ ENV JAVA_VERSION_MAJOR=8 \
     JAVA_HOME=/opt/jdk \
     PATH=${PATH}:/opt/jdk/bin \
     GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc \
-    GLIBC_VERSION=2.28-r0 \
+    GLIBC_VERSION=2.29-r0 \
     LANG=C.UTF-8
 
 # do all in one step
@@ -23,8 +23,9 @@ RUN set -ex && \
     [[ ${JAVA_VERSION_MAJOR} != 7 ]] || ( echo >&2 'Oracle no longer publishes JAVA7 packages' && exit 1 ) && \
     apk -U upgrade && \
     apk add libstdc++ curl ca-certificates bash && \
+    wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
     for pkg in glibc-${GLIBC_VERSION} glibc-bin-${GLIBC_VERSION} glibc-i18n-${GLIBC_VERSION}; do curl -sSL ${GLIBC_REPO}/releases/download/${GLIBC_VERSION}/${pkg}.apk -o /tmp/${pkg}.apk; done && \
-    apk add --allow-untrusted /tmp/*.apk && \
+    apk add /tmp/*.apk && \
     rm -v /tmp/*.apk && \
     ( /usr/glibc-compat/bin/localedef --force --inputfile POSIX --charmap UTF-8 C.UTF-8 || true ) && \
     echo "export LANG=C.UTF-8" > /etc/profile.d/locale.sh && \

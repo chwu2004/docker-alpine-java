@@ -2,7 +2,7 @@
 
 set -o pipefail -e
 
-JVM_FLAVORS=(server-jre jdk jdk-dcevm)
+JVM_FLAVORS=(server-jre server-jre_nashorn jdk_nashorn jdk jdk-dcevm)
 JCE_FLAVORS=(standard unlimited)
 
 # TEMPLATES (one per flavor)
@@ -10,15 +10,34 @@ JCE_FLAVORS=(standard unlimited)
 # Dockerfile.jdk.tpl
 # Dockerfile.jdk-dcevm.tpl
 
-JAVA_VERSIONS=(7-80-15 8-92-14 8-102-14 8-111-14 8-121-13-e9e7ea248e2c4826b92b3f075a80e441 8-131-11-d54c1d3a095b4ff2b6607d096fa80163 8-141-15-336fa29ff2bb4ef291e347e091f7f4a7 8-144-01-090f390dda5b47b9b721c7dfaa008135 8-151-12-e758a0de34e24606bca991d704f6dcbf 8-152-16-aa0333dd3019491ca4f6ddbe78cdb6d0 8-162-12-0da788060d494f5095bf8624735fa2f1 8-172-11-a58eab1ec242421181065cdc37240b08 8-181-13-96a7b8442fe848ef90c96a2fad6ed6d1 8-191-12-2787e4a523244c269598db4e85c51e0c 8-192-12-750e1c8617c5452694857ad95c3ee230)
+JAVA_VERSIONS=(
+  7-80-15
+  8-92-14
+  8-102-14
+  8-111-14
+  8-121-13-e9e7ea248e2c4826b92b3f075a80e441
+  8-131-11-d54c1d3a095b4ff2b6607d096fa80163
+  8-141-15-336fa29ff2bb4ef291e347e091f7f4a7
+  8-144-01-090f390dda5b47b9b721c7dfaa008135
+  8-151-12-e758a0de34e24606bca991d704f6dcbf
+  8-152-16-aa0333dd3019491ca4f6ddbe78cdb6d0
+  8-162-12-0da788060d494f5095bf8624735fa2f1
+  8-172-11-a58eab1ec242421181065cdc37240b08
+  8-181-13-96a7b8442fe848ef90c96a2fad6ed6d1
+  8-191-12-2787e4a523244c269598db4e85c51e0c
+  8-192-12-750e1c8617c5452694857ad95c3ee230
+  8-201-09-42970487e3af4f5aa5bca3f542482c60
+  8-202-08-1961070e4c9b4e26a04e7f5a083f551e
+  )
 
 ALPINE_VERSION="3.8"
-GLIBC_VERSION="2.28-r0"
+GLIBC_VERSION="2.29-r0"
 GLIBC_REPO="https:\/\/github.com\/sgerrand\/alpine-pkg-glibc"
 HOTSWAP_AGENT_VERSION="1.2.0"
 
 gen_dockerfile() {
-  JVM_PACKAGE="$1"
+  JVM_PACKAGE="${1}"
+
   DOCKERFILE_TEMPLATE="Dockerfile.${JVM_PACKAGE}.tpl"
   DOCKERFILE_TARGET="${JVM_MAJOR}/${JVM_MINOR}b${JVM_BUILD}/${JVM_PACKAGE}/${JAVA_JCE}/Dockerfile"
   DOCKERFILE_TARGET_DIR="$(dirname ${DOCKERFILE_TARGET})"
@@ -33,6 +52,10 @@ gen_dockerfile() {
   # create target dockerfile dir
   if [ ! -e ${DOCKERFILE_TARGET_DIR} ]; then
     mkdir -p ${DOCKERFILE_TARGET_DIR}
+  fi
+
+  if [[ "${1#*_}" == "nashorn" ]]; then
+    JVM_PACKAGE="${1%_*}"
   fi
 
   if [ "${JVM_PACKAGE}" == "jdk-dcevm" ]; then
@@ -79,12 +102,20 @@ for version in ${JAVA_VERSIONS[@]}; do
   fi
 
   for JVM_FLAVOR in ${JVM_FLAVORS[@]}; do
-    
-    if [ "${JVM_MAJOR}" -eq "8" ]; then
-      for JAVA_JCE in ${JCE_FLAVORS[@]}; do
+
+    if [[ ${JVM_MAJOR} -eq 8 ]]; then
+      if [[ "${JVM_FLAVOR}" == *_nashorn ]] && [[ ${JVM_MINOR} -lt 192 ]]; then
+        continue
+      elif [[ "${JVM_FLAVOR}" == *_nashorn ]] && [[ ${JVM_MINOR} -ge 192 ]]; then
         gen_dockerfile $JVM_FLAVOR
-      done
+      else
+        for JAVA_JCE in ${JCE_FLAVORS[@]}; do
+          gen_dockerfile $JVM_FLAVOR
+        done
+        unset JAVA_JCE
+      fi
     else
+      [[ "${JVM_FLAVOR}" == *_nashorn ]] && continue || true
       gen_dockerfile $JVM_FLAVOR
     fi
 
